@@ -1,6 +1,6 @@
-# Anasaitzouinet-inmarrakesh
+# inMarrakesh
 
-A Next.js 13 (App Router) web application that showcases destinations, handles user authentication, and includes a custom Admin panel. This project uses TypeScript, Tailwind CSS, Prisma, and various custom hooks and components to provide a scalable, maintainable architecture.
+A Next.js 15 (App Router) web application that showcases destinations, handles user authentication, and includes a custom Admin panel. This project uses TypeScript, Tailwind CSS, Prisma, and various custom hooks and components to provide a scalable, maintainable architecture.
 
 ## Table of Contents
 - [Overview](#overview)
