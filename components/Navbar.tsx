@@ -11,11 +11,13 @@ import {
     SheetTitle,
 } from "@/components/ui/sheet";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
-import Home from "@/app/page";
 import { authClient } from "@/lib/auth-client";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { useRouter } from "next/navigation";
+
+
 
 const NavItems = [
-
     {
         name: 'Trips',
         href: '/Destinations'
@@ -29,14 +31,15 @@ const NavItems = [
         href: '#'
     },
 ]
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+
 const SlideTabs = () => {
     const [position, setPosition] = useState<Position>({
         left: 0,
         width: 0,
         opacity: 0,
     });
-
+    const { data } = authClient.useSession()
+    const router = useRouter()
 
     return (
         <ul
@@ -59,10 +62,36 @@ const SlideTabs = () => {
 
 
 
-            <Tab href="/auth" setPosition={setPosition}>
-                <User2Icon className='w-6 h-6' />
-            </Tab>
-
+            <motion.div
+                initial={{ opacity: 0, x: -100 }}
+                animate={{ opacity: 1, x: 0 }}
+                className="flex items-center justify-center px-2"
+                transition={{ duration: 0.5, delay: 0.5, type: 'spring' }}>
+                
+                {
+                    data ? (
+                        <Avatar
+                        className="cursor-pointer"
+                        onClick={()=> router.push('/profile')}
+                        >
+                            <AvatarImage src={data?.user.image as string || "https://github.com/shadcn.png"} />
+                            <AvatarFallback>
+                                {data?.user.name.slice(0, 1)}
+                            </AvatarFallback>
+                        </Avatar>
+                    ) : (
+                        <Button
+                            variant={"ghost"}
+                            size={"icon"}
+                            asChild
+                        >
+                            <Tab href="/auth" setPosition={setPosition}>
+                                <User2Icon className='w-6 h-6' />
+                            </Tab>
+                        </Button>
+                    )
+                }
+            </motion.div>
 
             <Cursor position={position} />
         </ul>
@@ -205,8 +234,8 @@ export default function Navbar() {
                             {
                                 data ? (
                                     <Avatar>
-                                      <AvatarImage src={data?.user.image as string || "https://github.com/shadcn.png"} />
-                                      <AvatarFallback>CN</AvatarFallback>
+                                        <AvatarImage src={data?.user.image as string || "https://github.com/shadcn.png"} />
+                                        <AvatarFallback>CN</AvatarFallback>
                                     </Avatar>
                                 ) : (
                                     <Button

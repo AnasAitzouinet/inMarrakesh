@@ -9,20 +9,7 @@ const nextConfig = {
     ],
     unoptimized: true,
   },
-  async rewrites() {
-    return [
-      {
-        source: '/:path*',
-        has: [
-          {
-            type: 'host',
-            value: 'admin.localhost',
-          },
-        ],
-        destination: '/Admin/:path*',
-      },
-    ]
-  }
+   
 };
 
 export default nextConfig;

@@ -1,4 +1,3 @@
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -40,9 +39,13 @@ model Trips {
   pricePrivate String?
   priceShuttle String?
   image        String?
-  Video        String?
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  overview     String?
+  includes     String?
+  excludes     String?
+  itinerary    String[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Activities {
@@ -52,22 +55,37 @@ model Activities {
   pricePrivate String?
   priceShuttle String?
   image        String?
-  Video        String?
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  overview     String?
+  includes     String?
+  excludes     String?
+  itinerary    String[]
+
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  Reservation Reservation[]
 }
 
 model Reservation {
-  id         String    @id @default(cuid())
-  tripId     String?
-  activityId String?
-  dateFrom   DateTime?
-  dateTo     DateTime?
-  userId     String
-  status     String    @default("pending")
-  createdAt  DateTime  @default(now())
-  updatedAt  DateTime  @updatedAt
-  user       User      @relation(fields: [userId], references: [id])
+  id          String    @id @default(cuid())
+  tripId      String?
+  activityId  String?
+  dateTo      DateTime?
+  phoneNumber String?
+  email       String?
+  name        String?
+  kids        Int?
+  adults      Int?
+  isPaid      Boolean   @default(false)
+  isPickup    Boolean   @default(false)
+  pickUpPlace String?
+
+  userId       String
+  status       String      @default("pending")
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+  user         User        @relation(fields: [userId], references: [id])
+  Activities   Activities? @relation(fields: [activitiesId], references: [id])
+  activitiesId String?
 }
 
 model Session {

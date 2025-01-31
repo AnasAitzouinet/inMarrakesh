@@ -1,10 +1,7 @@
 "use client";
 
 import Navbar from "@/components/Navbar";
-import AboutUs from "@/components/sections/AboutUs";
-import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
-import { ArrowDownIcon, Facebook } from "lucide-react";
 
 export default function Hero() {
     return (

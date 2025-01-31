@@ -47,7 +47,26 @@ export function LoginForm({
     }
   }
 
+  const handleGoogleSignIn = async () => {
+    setLoading(true)
+    try {
+      const { data, error } = await authClient.signIn.social({
+        provider: "google",
+        callbackURL: "/Admin",
+      } )
 
+      console.log(data)
+      if (error) {
+        console.error(error)
+        return
+      }
+      
+    } catch (err) {
+      console.error(err)
+    } finally {
+      setLoading(false)
+    }
+  }
 
 
   return (
@@ -97,6 +116,8 @@ export function LoginForm({
 
             <Button
               disabled={loading}
+              type="button"
+              onClick={handleGoogleSignIn}
               variant="outline" className="w-full   px-2">
               <svg xmlns="http://www.w3.org/2000/svg" className="" viewBox="0 0 24 24">
                 <path

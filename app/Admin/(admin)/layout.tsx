@@ -1,30 +1,37 @@
-"use client"
+"use server"
+
 import React from 'react'
-
-
 import { AppSidebar } from "@/components/app-sidebar"
-
 import {
   SidebarInset,
   SidebarProvider,
-  SidebarTrigger,
 } from "@/components/ui/sidebar"
-import { authClient } from '@/lib/auth-client'
- 
+   
+import { redirect } from 'next/navigation'
+import { auth } from '@/lib/auth'
+import { headers } from 'next/headers'
+
 
 
 interface LayoutProps {
-    children: React.ReactNode
+  children: React.ReactNode
 }
-export default function Layout({ children }: LayoutProps) {
+export default async function Layout({ children }: LayoutProps) {
+  const session = await auth.api.getSession({
+    headers: await headers()
+  })
 
-  const session = authClient.useSession()
-
-  console.log(session)
-
+  // check if there is a session 
+  if (!session) {
+    redirect("/auth")
+  } else if (session && session.user?.role !== "admin") {
+    redirect("/")
+  }
   return (
     <SidebarProvider>
-      <AppSidebar />
+      <AppSidebar 
+        user={session.user}
+      />
       <SidebarInset>
        {children}
       </SidebarInset>

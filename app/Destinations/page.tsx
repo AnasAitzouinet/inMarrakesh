@@ -73,7 +73,7 @@ export default function Destinations() {
                         <DestinationNavbar />
                     </div>
                     <div className='lg:my-[10rem] hidden lg:block'>
-                        {['Trips', 'Activities', 'WishList', 'Airports'].map((item) => (
+                        {['Trips', 'Activities', 'WishList'].map((item) => (
                             <div
                                 key={item}
                                 onClick={() => setActive(item)}
@@ -108,7 +108,7 @@ export default function Destinations() {
             </div>
             <div className='lg:w-[65%] lg:h-screen top-0 right-0 lg:fixed overflow-auto'>
                 <div className='p-5 w-full h-full'>
-                    <div className='flex flex-col gap-5'>
+                    <div className='flex flex-col gap-5 pb-5'>
 
                         {
                             loading ? (
