@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { Plus, X } from "lucide-react"
+import { Pencil, Plus, X } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -20,37 +20,41 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 
 import { tripFormSchema, type TripFormValues } from "@/lib/schema"
-import { AddTrip } from "@/server/Admin"
+import { AddTrip, UpdateTrip } from "@/server/Admin"
 import { toast } from "sonner"
-import { revalidatePath } from "next/cache"
+import { Trips } from "@prisma/client"
 
-export function AddTripDialog() {
+interface TripFormProps {
+    trip: Trips;
+}
+export function UpdateTripDialog({ trip }: TripFormProps) {
+
     const [open, setOpen] = useState(false)
 
     const form = useForm<TripFormValues>({
         resolver: zodResolver(tripFormSchema),
         defaultValues: {
-            title: "",
-            subtitle: "",
-            pricePrivate: "",
-            priceShuttle: "",
-            image: "",
-            overview: "",
-            includes: "",
-            excludes: "",
-            itinerary: [""],
+            title: trip.title ?? undefined,
+            subtitle: trip.subtitle ?? undefined,
+            pricePrivate: trip.pricePrivate ?? undefined,
+            priceShuttle: trip.priceShuttle ?? undefined,
+            image: trip.image ?? undefined,
+            overview: trip.overview ?? undefined,
+            includes: trip.includes ?? undefined,
+            excludes: trip.excludes ?? undefined,
+            itinerary: trip.itinerary,
         },
     })
 
     async function onSubmit(data: TripFormValues) {
         try {
-            const res = await AddTrip(data)
+            const res = await UpdateTrip(trip.id, data)
             if (res.error) {
                 toast.error(res.error)
                 return
             }
 
-             toast.success("Activity added successfully")
+            toast.success("Activity added successfully")
         } catch (error) {
             console.error(error)
             toast.error("Failed to add activity")
@@ -62,7 +66,10 @@ export function AddTripDialog() {
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                <Button variant="outline">Add New Trip</Button>
+                <Button variant="outline">
+                    <Pencil className="h-4 w-4 mr-1" />
+                    Edit
+                </Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[625px] max-h-[90vh] overflow-y-auto">
                 <DialogHeader>

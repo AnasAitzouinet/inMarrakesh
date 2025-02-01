@@ -19,16 +19,16 @@ import { useRouter } from "next/navigation";
 
 const NavItems = [
     {
-        name: 'Trips',
+        name: 'Destinations',
         href: '/Destinations'
     },
     {
-        name: 'Activities',
-        href: '#'
+        name: 'About Us',
+        href: '/About'
     },
     {
-        name: 'Contact',
-        href: '#'
+        name: 'Contact Us',
+        href: '/Contact'
     },
 ]
 
@@ -67,12 +67,12 @@ const SlideTabs = () => {
                 animate={{ opacity: 1, x: 0 }}
                 className="flex items-center justify-center px-2"
                 transition={{ duration: 0.5, delay: 0.5, type: 'spring' }}>
-                
+
                 {
                     data ? (
                         <Avatar
-                        className="cursor-pointer"
-                        onClick={()=> router.push('/profile')}
+                            className="cursor-pointer"
+                            onClick={() => router.push('/profile')}
                         >
                             <AvatarImage src={data?.user.image as string || "https://github.com/shadcn.png"} />
                             <AvatarFallback>

@@ -20,33 +20,37 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { activityFormSchema } from "@/lib/schema"
-import { AddActivity  } from "@/server/Admin"
+import { AddActivity, UpdateActivity } from "@/server/Admin"
 import { toast } from "sonner"
-import { revalidatePath } from "next/cache"
+import { Activities } from "@prisma/client"
 
 export type ActivityFormValues = z.infer<typeof activityFormSchema>
 
-export function AddActivityDialog() {
+interface ActivityFormProps {
+  Activity: Activities
+}
+
+export function UpdateActivityDialog({ Activity }: ActivityFormProps) {
   const [open, setOpen] = useState(false)
 
   const form = useForm<ActivityFormValues>({
     resolver: zodResolver(activityFormSchema),
     defaultValues: {
-      title: "",
-      subtitle: "",
-      pricePrivate: "",
-      priceShuttle: "",
-      image: "",
-      overview: "",
-      includes: "",
-      excludes: "",
-      itinerary: [""],
+      title: Activity.title ?? undefined,
+      subtitle: Activity.subtitle ?? undefined,
+      pricePrivate: Activity.pricePrivate ?? undefined,
+      priceShuttle: Activity.priceShuttle ?? undefined,
+      image: Activity.image ?? undefined,
+      overview: Activity.overview ?? undefined,
+      includes: Activity.includes ?? undefined,
+      excludes: Activity.excludes ?? undefined,
+      itinerary: Activity.itinerary,
     },
   })
 
   async function onSubmit(data: ActivityFormValues) {
     try {
-      const res = await  AddActivity(data)
+      const res = await UpdateActivity(Activity.id,data)
       if (res.error) {
         toast.error(res.error)
         return
@@ -64,7 +68,7 @@ export function AddActivityDialog() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline">Add New Activity</Button>
+        <Button variant="outline" size="sm">Edit</Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[625px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>

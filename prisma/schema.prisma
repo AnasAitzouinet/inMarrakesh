@@ -21,7 +21,7 @@ model User {
   name          String?
   emailVerified Boolean?
   image         String?
-  reservations  Reservation[]
+  reservations  Reservations[]
   accounts      Account[]
   sessions      Session[]
 
@@ -44,8 +44,9 @@ model Trips {
   excludes     String?
   itinerary    String[]
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  Reservation Reservations[]
 }
 
 model Activities {
@@ -62,10 +63,12 @@ model Activities {
 
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
-  Reservation Reservation[]
+  Reservation Reservations[]
 }
 
-model Reservation {
+
+
+model Reservations {
   id          String    @id @default(cuid())
   tripId      String?
   activityId  String?
@@ -79,13 +82,17 @@ model Reservation {
   isPickup    Boolean   @default(false)
   pickUpPlace String?
 
-  userId       String
-  status       String      @default("pending")
-  createdAt    DateTime    @default(now())
-  updatedAt    DateTime    @updatedAt
-  user         User        @relation(fields: [userId], references: [id])
+  userId    String
+  status    String   @default("pending")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id])
+
   Activities   Activities? @relation(fields: [activitiesId], references: [id])
   activitiesId String?
+
+  Trips   Trips?  @relation(fields: [tripsId], references: [id])
+  tripsId String?
 }
 
 model Session {
