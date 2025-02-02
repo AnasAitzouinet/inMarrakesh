@@ -6,8 +6,11 @@ export default async function Page() {
     const trips = await GetTrips()
     const activities = await GetActivities()
 
+    console.log(trips)
     if (!trips?.data || !activities?.data) {
-        return null
+        return <div>
+          No Destinations Found
+        </div>
     }
 
   return (
