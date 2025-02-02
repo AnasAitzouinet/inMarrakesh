@@ -73,7 +73,7 @@ export function UpdateActivityDialog({ Activity }: ActivityFormProps) {
       <DialogContent className="sm:max-w-[625px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Add New Activity</DialogTitle>
-          <DialogDescription>Fill in the details for the new activity. Click save when you're done.</DialogDescription>
+          <DialogDescription>{"Fill in the details for the new activity. Click save when you're done."}</DialogDescription>
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">

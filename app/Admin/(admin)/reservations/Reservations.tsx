@@ -118,7 +118,7 @@ export default function ReservationsPage({ reservations }: ReservationsProps) {
                                 <DialogHeader>
                                     <DialogTitle>Reservation Details</DialogTitle>
                                     <DialogDescription>
-                                        Detailed information for {selectedReservation.name}'s reservation
+                                        Detailed information for {selectedReservation.name}&apos;s reservation
                                     </DialogDescription>
                                 </DialogHeader>
                                 <div className="space-y-4">

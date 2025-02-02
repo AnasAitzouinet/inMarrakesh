@@ -18,17 +18,19 @@ import { Check, Heart } from 'lucide-react';
 import { Checkbox } from './ui/checkbox';
 import { cn } from '@/lib/utils';
 import { badgeVariants } from './ui/badge';
- 
+import { useWishList } from '@/hooks/useWishList';
+import { Activities, Trips } from '@prisma/client';
+
 
 
 interface WhatIsOnProps {
     children: React.ReactNode
     image: string | null;
-    id: string
-
+    _: Trips | Activities
 }
 
-export default function WhatIsOn({ children, image, id }: WhatIsOnProps) {
+export default function WhatIsOn({ children, image, _ }: WhatIsOnProps) {
+    const { addToWishList, removeFromWishList, isInWishList } = useWishList();
 
     return (
         <MorphingDialog
@@ -41,14 +43,18 @@ export default function WhatIsOn({ children, image, id }: WhatIsOnProps) {
         >
             <MorphingDialogTrigger
                 className='size-full'
+
             >
                 {children}
             </MorphingDialogTrigger>
-            <MorphingDialogContainer>
+            <MorphingDialogContainer
+
+            >
                 <MorphingDialogContent
                     style={{
                         borderRadius: '12px',
                     }}
+
                     className='relative h-auto w-[90vw] border border-gray-100 bg-white'
                 >
                     <ScrollArea className='h-[90vh] flex flex-col items-center px-20' type='scroll'>
@@ -57,18 +63,27 @@ export default function WhatIsOn({ children, image, id }: WhatIsOnProps) {
                         </div>
                         <div className='size-full flex flex-col items-start px-8 py-3 space-y-8'>
                             <div className='flex items-center justify-start  flex-row-reverse gap-x-5 w-full'>
-                                <label
+                                <div
                                     className={cn(
                                         badgeVariants({ variant: "default" }),
                                         "cursor-pointer hover:bg-primary/80 border-neutral-900/40 has-[[data-state=unchecked]]:bg-muted has-[[data-state=unchecked]]:text-muted-foreground has-[:focus-visible]:outline has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-ring/70",
                                     )}
-                                     
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        console.log('clicked');
+                                        if (isInWishList(_.id)) {
+                                            console.log('remove');
+                                            removeFromWishList(_.id);
+                                        } else {
+                                            addToWishList(_);
+                                        }
+                                    }}
                                 >
-                                    <div className="flex items-center gap-2 px-5 py-2.5 ">
+                                    <div className="flex items-center gap-2 px-5 py-2.5">
                                         <Checkbox
                                             id="badge-selectable"
                                             className="peer sr-only after:absolute after:inset-0"
-                                            defaultChecked
+                                            checked={!isInWishList(_.id)}
                                         />
                                         <Heart
                                             size={20}
@@ -78,7 +93,7 @@ export default function WhatIsOn({ children, image, id }: WhatIsOnProps) {
                                         />
                                         <span className="select-none">Wishlist</span>
                                     </div>
-                                </label>
+                                </div>
 
                                 <Reserver
                                     onReserve={(date) => { }}
@@ -99,7 +114,7 @@ export default function WhatIsOn({ children, image, id }: WhatIsOnProps) {
                                 Read more about - Hot Air Balloon Flight over Marrakech with Traditional Breakfast</p>
 
                             <h2 className='text-4xl font-bold'>
-                                What's Included
+                                What&apos;s Included
                             </h2>
 
                             <ol>

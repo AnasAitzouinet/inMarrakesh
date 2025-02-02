@@ -2,17 +2,14 @@ import React from 'react'
 import {
     Breadcrumb,
     BreadcrumbItem,
-    BreadcrumbLink,
-    BreadcrumbList,
+     BreadcrumbList,
     BreadcrumbPage,
-    BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb"
+ } from "@/components/ui/breadcrumb"
 import { Separator } from "@/components/ui/separator"
 import {
     Card,
     CardContent,
-    CardDescription,
-    CardFooter,
+ 
     CardHeader,
     CardTitle,
 } from "@/components/ui/card"

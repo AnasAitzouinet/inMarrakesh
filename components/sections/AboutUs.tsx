@@ -29,7 +29,7 @@ export default function AboutUs() {
                     animate={{ opacity: pInView ? 1 : 0, x: pInView ? 0 : -100 }}
                     transition={{ duration: 0.5, delay: 0.9 }}
                     className='text-neutral-500 py-3 text-center sm:text-left text-sm sm:text-base max-w-[600px]'>
-                    Discover Marrakesh with our premier tourism agency. With 20+ years of transport expertise, we've evolved into a full-service provider offering seamless travel experiences across Morocco. From vibrant cities to stunning landscapes, we ensure your journey is unforgettable.
+                    Discover Marrakesh with our premier tourism agency. With 20+ years of transport expertise, we&apos;ve evolved into a full-service provider offering seamless travel experiences across Morocco. From vibrant cities to stunning landscapes, we ensure your journey is unforgettable.
                 </motion.p>
                 <motion.div
                     initial={{ opacity: 0, x: -100 }}

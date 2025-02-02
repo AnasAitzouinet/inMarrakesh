@@ -1,14 +1,12 @@
 "use client"
 import { Button } from "@/components/ui/button"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Pencil, Trash } from "lucide-react"
+import {  Trash } from "lucide-react"
 import {
     Breadcrumb,
     BreadcrumbItem,
-    BreadcrumbLink,
     BreadcrumbList,
     BreadcrumbPage,
-    BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
 import { Separator } from "@/components/ui/separator"
 import { SidebarTrigger } from "@/components/ui/sidebar"
@@ -16,16 +14,6 @@ import { AddActivityDialog } from "./ActivityForm"
 import { Activities } from "@prisma/client"
 import { UpdateActivityDialog } from "./UpdateActivityForm"
 import { DeleteActivity } from "@/server/Admin"
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog"
-
  
 
 interface ActivitiesProps {
@@ -77,7 +65,7 @@ export default function ActivitiesPage({ activities }: ActivitiesProps) {
                                                 Activity={activity}
                                             />
                                         </Button>
-                                        
+
                                         <AlertDialog>
                                             <AlertDialogTrigger asChild>
                                                 <Button variant="destructive" size="sm">

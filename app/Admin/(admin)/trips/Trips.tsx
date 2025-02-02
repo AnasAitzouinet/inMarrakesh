@@ -1,15 +1,13 @@
 "use client"
 import { Button } from "@/components/ui/button"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Pencil, Trash } from "lucide-react"
-import Link from "next/link"
+import { Trash } from "lucide-react"
 import {
     Breadcrumb,
     BreadcrumbItem,
-    BreadcrumbLink,
+
     BreadcrumbList,
     BreadcrumbPage,
-    BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
 import { Separator } from "@/components/ui/separator"
 import { SidebarTrigger } from "@/components/ui/sidebar"
@@ -17,15 +15,7 @@ import { SidebarTrigger } from "@/components/ui/sidebar"
 import { AddTripDialog } from "./TripForm"
 import { Trips } from "@prisma/client"
 import { UpdateTripDialog } from "./UpdateTripForm"
-import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
-} from "@/components/ui/dialog"
+
 import { DeleteTrip } from "@/server/Admin"
 
 
@@ -114,7 +104,6 @@ export default function TripsPage({ trips }: Trip) {
 }
 import {
     AlertDialog,
-    AlertDialogAction,
     AlertDialogCancel,
     AlertDialogContent,
     AlertDialogDescription,

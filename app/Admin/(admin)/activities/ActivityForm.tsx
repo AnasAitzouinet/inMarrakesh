@@ -20,10 +20,9 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { activityFormSchema } from "@/lib/schema"
-import { AddActivity  } from "@/server/Admin"
+import { AddActivity } from "@/server/Admin"
 import { toast } from "sonner"
-import { revalidatePath } from "next/cache"
-
+ 
 export type ActivityFormValues = z.infer<typeof activityFormSchema>
 
 export function AddActivityDialog() {
@@ -46,7 +45,7 @@ export function AddActivityDialog() {
 
   async function onSubmit(data: ActivityFormValues) {
     try {
-      const res = await  AddActivity(data)
+      const res = await AddActivity(data)
       if (res.error) {
         toast.error(res.error)
         return
@@ -69,7 +68,9 @@ export function AddActivityDialog() {
       <DialogContent className="sm:max-w-[625px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Add New Activity</DialogTitle>
-          <DialogDescription>Fill in the details for the new activity. Click save when you're done.</DialogDescription>
+          <DialogDescription>
+            {" Fill in the details for the new activity. Click save when you're done."}
+          </DialogDescription>
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
