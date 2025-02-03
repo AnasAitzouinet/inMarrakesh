@@ -1,14 +1,15 @@
 "use client"
 
 import { useState } from "react"
-import { ChevronLeft, Mail, Phone, Calendar, MapPin, Shield, LogOut } from "lucide-react"
+import { Mail, Phone, Calendar, MapPin, Shield, LogOut } from "lucide-react"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
 import { User } from "better-auth"
-import { Button } from "@/components/ui/button"
 import { authClient } from "@/lib/auth-client"
 import { useRouter } from "next/navigation"
+import { Prisma } from "@prisma/client"
+import { Button } from "@/components/ui/button"
 
 // Mock data based on the schema
 const userData = {
@@ -52,11 +53,20 @@ const userData = {
 }
 
 interface UserProfileProps {
-    user: User;
+    user: Prisma.UserGetPayload<{
+        include: {
+            reservations: {
+                include: {
+                    Trips: true
+                    Activities: true
+                }
+            }
+        }
+    }>
 }
 
 export default function UserProfile({ user }: UserProfileProps) {
-    const [activeTab, setActiveTab] = useState("profile")
+    const [activeTab, setActiveTab] = useState("reservations")
     const router = useRouter()
 
     const handleLogout = async () => {
@@ -73,9 +83,9 @@ export default function UserProfile({ user }: UserProfileProps) {
             <div className="relative px-4 sm:px-6 lg:px-8 pb-6 max-w-7xl mx-auto">
                 <div className="absolute -top-16 left-4 sm:left-6">
                     <Avatar className="w-24 h-24 sm:w-32 sm:h-32 border-4 border-white rounded-2xl bg-gradient-to-br from-purple-400 to-orange-400">
-                        <AvatarImage src={user.image as string} />
+                        <AvatarImage src={user.image as string} className="z-50" />
                         <AvatarFallback>
-                            {user.name.slice(0, 1)}
+                            {user.name?.slice(0, 2).toUpperCase()}
                         </AvatarFallback>
                     </Avatar>
                 </div>
@@ -107,10 +117,8 @@ export default function UserProfile({ user }: UserProfileProps) {
                         </div>
                         <div className="flex items-center text-sm sm:text-base text-gray-500">
                             <Phone className="w-4 h-4 mr-2" />
-                            {
-                                // TODO: Add phone number to user object
-                            }
-                            {userData.phone}
+
+                            {user.phone || "No phone number"}
                         </div>
 
                     </div>
@@ -118,7 +126,7 @@ export default function UserProfile({ user }: UserProfileProps) {
 
                 {/* Navigation */}
                 <nav className="flex overflow-x-auto gap-4 sm:gap-6 mt-6 border-b">
-                    {["Profile", "Notifications", "Connect", "Plans", "Teams", "Password"].map((tab) => (
+                    {["Reservations", "Settings"].map((tab) => (
                         <button
                             key={tab}
                             className={`whitespace-nowrap pb-4 px-1 text-sm font-medium transition-colors ${activeTab === tab.toLowerCase()
@@ -144,7 +152,7 @@ export default function UserProfile({ user }: UserProfileProps) {
                                         <div className="flex-1">
                                             <h3 className="font-medium">{reservation.name}</h3>
                                             <div className="mt-2 space-y-1">
-                                                <div className="极flex items-center text-sm text-gray-500">
+                                                <div className=" flex items-center text-sm text-gray-500">
                                                     <Calendar className="w-4 h-4 mr-2" />
                                                     {new Date(reservation.dateTo).toLocaleDateString()}
                                                 </div>
@@ -156,6 +164,9 @@ export default function UserProfile({ user }: UserProfileProps) {
                                                 )}
                                             </div>
                                         </div>
+                                        <Badge variant="outline" className={reservation.isPaid ? "text-green-700" : "text-red-700"}>
+                                                {reservation.isPaid ? "Paid" : "Pending Payment"}
+                                            </Badge>
                                         <Badge
                                             variant={reservation.status === "confirmed" ? "default" : "secondary"}
                                             className={
@@ -177,10 +188,18 @@ export default function UserProfile({ user }: UserProfileProps) {
                                                 </span>
                                             )}
                                         </div>
-                                        <div>
-                                            <Badge variant="outline" className={reservation.isPaid ? "text-green-700" : "text-red-700"}>
-                                                {reservation.isPaid ? "Paid" : "Pending Payment"}
-                                            </Badge>
+                                        <div className="flex items-center gap-4">
+                                            
+                                            <Button 
+                                            size={'sm'}
+                                                variant="outline"
+                                                className="text-red-700 rounded-full"
+
+                                            >
+
+                                                Cancel
+
+                                            </Button>
                                         </div>
                                     </div>
                                 </div>

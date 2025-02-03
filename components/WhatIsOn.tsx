@@ -10,7 +10,7 @@ import {
 } from '@/components/ui/morphine-dialog';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import Reserver from './Reserver';
-import { Calendar, Check, Users } from "lucide-react"
+import { Calendar, Check, MapPin, Users } from "lucide-react"
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { useWishList } from '@/hooks/useWishList';
@@ -47,7 +47,45 @@ const tourOptions: TourOption[] = [
         time: "3:30 PM",
     },
 ]
-
+const itinerary = [
+    {
+        day: 1,
+        title: "Arrival in Athens",
+        description:
+            "Welcome to Greece! Arrive in Athens and transfer to your hotel. Evening welcome dinner with your group.",
+    },
+    {
+        day: 2,
+        title: "Athens City Tour",
+        description:
+            "Explore the Acropolis, Parthenon, and other ancient wonders. Afternoon at leisure to discover the charming Plaka district.",
+    },
+    {
+        day: 3,
+        title: "Delphi Excursion",
+        description: "Day trip to Delphi, home of the famous oracle. Visit the archaeological site and museum.",
+    },
+    {
+        day: 4,
+        title: "Santorini",
+        description: "Morning ferry to Santorini. Afternoon to relax and enjoy the stunning views of the caldera.",
+    },
+    {
+        day: 5,
+        title: "Santorini Island Tour",
+        description: "Visit Oia, Imerovigli, and Fira. Wine tasting at a local vineyard. Evening sunset cruise.",
+    },
+    {
+        day: 6,
+        title: "Santorini Free Day",
+        description: "Free day to explore on your own or relax on the beach. Optional activities available.",
+    },
+    {
+        day: 7,
+        title: "Departure",
+        description: "Transfer to Santorini airport for your departure flight. End of services.",
+    },
+]
 export default function WhatIsOn({ children, image, _ }: WhatIsOnProps) {
     const { addToWishList, removeFromWishList, isInWishList } = useWishList();
     const [selectedOption, setSelectedOption] = useState<string>(tourOptions[0].id)
@@ -95,9 +133,39 @@ export default function WhatIsOn({ children, image, _ }: WhatIsOnProps) {
                                     <li>Breakfast</li>
                                     <li>Beverages (coffee, tea, soft drinks)</li>
                                 </ol>
+
+                                <div>
+                                    <div className="pt-6">
+                                    <h2 className='text-2xl md:text-4xl font-bold mb-8'>
+
+                                            Itinerary</h2>
+                                        <div className="space-y-0">
+                                            {itinerary.map((item, index) => (
+                                                <div key={item.day} className="flex">
+                                                    <div className="mr-4 relative">
+                                                        <div className="w-10 h-10 bg-orange-500 rounded-full flex items-center justify-center text-white font-bold z-10 relative">
+                                                        <MapPin className="  text-white" size={20} />
+
+                                                        </div>
+                                                        {index < itinerary.length - 1 && (
+                                                            <div className="absolute top-10 left-1/2 bottom-0 w-0.5 bg-orange-300 -ml-px"></div>
+                                                        )}
+                                                        {index > 0 && <div className="absolute top-0 left-1/2 h-4 w-0.5 bg-orange-300 -ml-px"></div>}
+                                                    </div>
+                                                    <div className="flex-1 pb-8">
+                                                        <h3 className="text-xl font-semibold   flex items-center">
+                                                            {item.title}
+                                                        </h3>
+                                                        <p>{item.description}</p>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                            
-                            <Card className="w-full max-w-md mb-2 lg:top-0 lg:right-0">
+
+                            <Card className="w-full h-fit max-w-md mb-2 lg:top-0 lg:right-0">
                                 <CardHeader className="pb-4">
                                     <div className="space-y-1">
                                         <p className="text-sm text-muted-foreground">From</p>

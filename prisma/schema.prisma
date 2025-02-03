@@ -8,16 +8,16 @@ datasource db {
 }
 
 model User {
-  id            String        @id @default(cuid())
-  email         String        @unique
+  id            String         @id @default(cuid())
+  email         String         @unique
   firstName     String?
   lastName      String?
   password      String?
-  role          String        @default("user")
+  role          String         @default("user")
   phone         String?
   avatar        String?
-  createdAt     DateTime      @default(now())
-  updatedAt     DateTime      @updatedAt
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
   name          String?
   emailVerified Boolean?
   image         String?
@@ -42,10 +42,14 @@ model Trips {
   overview     String?
   includes     String?
   excludes     String?
+  duration     String?
+  canPickup    Boolean?
+  
   itinerary    String[]
+  options      String[]
 
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
   Reservation Reservations[]
 }
 
@@ -59,14 +63,16 @@ model Activities {
   overview     String?
   includes     String?
   excludes     String?
-  itinerary    String[]
+  canPickup    Boolean?
+  duration     String?
 
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
+  itinerary    String[]
+  options      String[]
+
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
   Reservation Reservations[]
 }
-
-
 
 model Reservations {
   id          String    @id @default(cuid())
