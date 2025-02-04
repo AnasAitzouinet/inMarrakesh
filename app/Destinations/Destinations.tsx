@@ -46,7 +46,9 @@ export default function Destinations({
                         <h1 className='text-white text-3xl font-black bottom-0 left-0 absolute p-5'>
                             Destinations
                         </h1>
-                        <DestinationNavbar />
+                        <DestinationNavbar
+                            setActive={setActive}
+                        />
                     </div>
                     <div className='lg:my-[10rem] hidden lg:block'>
                         {['trips', 'activities', 'WishList'].map((item) => (
@@ -84,20 +86,7 @@ export default function Destinations({
                 <div className='p-5 w-full h-full'>
                     <div className='flex flex-col gap-5 pb-5'>
                         {
-                            loading ? (
-                                Array.from({ length: 2 }).map((_, i) => <DestinationLoader key={i} />)
-                            ) : destinations.length > 0 ? (
-                                destinations.map((destination) => (
-                                    <DestinationItems key={destination.id} _={destination} />
-                                ))
-                            ) : (
-                                <div className="text-center py-10">
-                                    <p className="text-gray-500 text-xl">
-                                        No items in your wishlist, reload
-                                        the page to see your wishlist items
-                                    </p>
-                                </div>
-                            )
+                            getDestinations({ active, destinations })
                         }
                     </div>
                 </div>
@@ -105,3 +94,59 @@ export default function Destinations({
         </main>
     );
 }
+
+
+const getDestinations = ({ active, destinations }: { active: string, destinations: Activities[] | Trips[] }) => {
+    switch (active) {
+        case 'trips':
+
+            if (destinations.length === 0) {
+                return (
+                    <div className="text-center py-10">
+                        <p className="text-gray-500 text-xl">
+                            No trips available at the moment
+                        </p>
+                    </div>
+                )
+            }
+
+            return destinations.map((destination) => (
+                <DestinationItems key={destination.id} _={destination} />
+            ))
+        case 'activities':
+            if (destinations.length === 0) {
+                return (
+                    <div className="text-center py-10">
+                        <p className="text-gray-500 text-xl">
+                            No activities available at the moment
+                        </p>
+                    </div>
+                )
+            }
+            return destinations.map((destination) => (
+                <DestinationItems key={destination.id} _={destination} />
+            ))
+        case 'WishList':
+            if (destinations.length === 0) {
+                return (
+                    <div className="text-center py-10">
+                        <p className="text-gray-500 text-xl">
+                            No items in your wishlist, reload
+                            the page to see your wishlist items
+                        </p>
+                    </div>
+                )
+            }
+            return destinations.map((destination) => (
+                <DestinationItems key={destination.id} _={destination} />
+            ))
+        default:
+            return (
+                <div className="text-center py-10">
+                    <p className="text-gray-500 text-xl">
+                        Choose a category to view destinations
+                    </p>
+                </div>
+            )
+    }
+};

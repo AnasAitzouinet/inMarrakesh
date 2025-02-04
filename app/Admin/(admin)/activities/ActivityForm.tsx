@@ -22,7 +22,8 @@ import { Textarea } from "@/components/ui/textarea"
 import { activityFormSchema } from "@/lib/schema"
 import { AddActivity } from "@/server/Admin"
 import { toast } from "sonner"
- 
+import { Checkbox } from "@/components/ui/checkbox"
+
 export type ActivityFormValues = z.infer<typeof activityFormSchema>
 
 export function AddActivityDialog() {
@@ -39,6 +40,9 @@ export function AddActivityDialog() {
       overview: "",
       includes: "",
       excludes: "",
+      canPickup: false,
+      duration: "",
+      options: [""],
       itinerary: [""],
     },
   })
@@ -178,6 +182,93 @@ export function AddActivityDialog() {
                       <Textarea placeholder="What's excluded" {...field} />
                     </FormControl>
                     <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="duration"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Duration</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Activity duration" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="canPickup"
+                render={({ field }) => (
+                  <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+                    <FormControl>
+                      <Checkbox
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                      />
+                    </FormControl>
+                    <div className="space-y-1 leading-none">
+                      <FormLabel>Can Pickup</FormLabel>
+                      <FormDescription>
+                        Check if this activity offers pickup service
+                      </FormDescription>
+                    </div>
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="options"
+                render={() => (
+                  <FormItem>
+                    <FormLabel>Options</FormLabel>
+                    <FormDescription>Add the available options for the activity.</FormDescription>
+                    {form.watch("options").map((_, index) => (
+                      <FormField
+                        key={index}
+                        control={form.control}
+                        name={`options.${index}`}
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormControl>
+                              <div className="flex items-center space-x-2">
+                                <Input {...field} />
+                                <Button
+                                  type="button"
+                                  variant="outline"
+                                  size="icon"
+                                  onClick={() => {
+                                    const currentOptions = form.getValues("options")
+                                    if (currentOptions.length > 1) {
+                                      const newOptions = [...currentOptions]
+                                      newOptions.splice(index, 1)
+                                      form.setValue("options", newOptions)
+                                    }
+                                  }}
+                                >
+                                  <X className="h-4 w-4" />
+                                </Button>
+                              </div>
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    ))}
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      className="mt-2"
+                      onClick={() => {
+                        form.setValue("options", [...form.getValues("options"), ""])
+                      }}
+                    >
+                      <Plus className="mr-2 h-4 w-4" />
+                      Add Option
+                    </Button>
                   </FormItem>
                 )}
               />

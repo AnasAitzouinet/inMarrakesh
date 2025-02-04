@@ -2,10 +2,15 @@
 import { ListEnd, Menu, X } from 'lucide-react';
 import React from 'react'
 import { AnimatePresence, motion } from 'framer-motion';
+import { useRouter } from 'next/navigation';
 
-export default function DestinationNavbar() {
+
+interface DestinationNavbarProps {
+    setActive: React.Dispatch<React.SetStateAction<"trips" | "activities" | "WishList">>   
+}
+export default function DestinationNavbar({  setActive }: DestinationNavbarProps) {
     const [open, setOpen] = React.useState(false)
-
+    const router = useRouter();
     return (
         <div className='relative right-0 top-0 lg:hidden h-full w-full'>
             <motion.div
@@ -39,11 +44,18 @@ export default function DestinationNavbar() {
                         exit={{ opacity: 0, y: -20 }}
                         className='absolute left-0 top-0 font-bold text-md   p-5 rounded-2xl shadow-lg'>
                         <ul>
-                            <li className='hover:text-sky-500 transition-colors duration-300 ease-in-out'>Home</li>
-                            <li>Trips</li>
-                            <li>Activites</li>
-                            <li>Wishlist</li>
-                            <li>Transfer</li>
+                            <li 
+                                onClick={() => router.push('/')}
+                            className='hover:text-sky-500 transition-colors duration-300 ease-in-out'>Home</li>
+                            <li
+                                onClick={() => setActive('trips')}
+                            >Trips</li>
+                            <li
+                                onClick={() => setActive('activities')}
+                            >Activities</li>
+                            <li
+                                onClick={() => setActive('WishList')}
+                            >Wishlist</li>
                         </ul>
                     </motion.div>
                 }

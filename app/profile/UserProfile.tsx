@@ -10,6 +10,7 @@ import { authClient } from "@/lib/auth-client"
 import { useRouter } from "next/navigation"
 import { Prisma } from "@prisma/client"
 import { Button } from "@/components/ui/button"
+import Image from "next/image"
 
 // Mock data based on the schema
 const userData = {
@@ -82,19 +83,20 @@ export default function UserProfile({ user }: UserProfileProps) {
             {/* Profile Info */}
             <div className="relative px-4 sm:px-6 lg:px-8 pb-6 max-w-7xl mx-auto">
                 <div className="absolute -top-16 left-4 sm:left-6">
-                    <Avatar className="w-24 h-24 sm:w-32 sm:h-32 border-4 border-white rounded-2xl bg-gradient-to-br from-purple-400 to-orange-400">
-                        <AvatarImage src={user.image as string} className="z-50" />
-                        <AvatarFallback>
-                            {user.name?.slice(0, 2).toUpperCase()}
-                        </AvatarFallback>
-                    </Avatar>
+
+                    <div className="w-24 h-24 sm:w-32 sm:h-32 border-4 border-white rounded-2xl bg-gradient-to-br from-purple-400 to-orange-400 overflow-hidden">
+                        <Image
+                            width={96}
+                            height={96}
+                            src={user.image || ""} alt="" className="size-full object-cover" />
+                    </div>
                 </div>
 
                 <div className="pt-16 sm:pt-20">
                     <div className="flex flex-col sm:flex-row sm:items-center gap-3">
                         <h1 className="text-xl sm:text-2xl font-semibold">{user.name}</h1>
                         {user.emailVerified && (
-                            <Badge variant="secondary" className="bg-blue-50 text-blue-700 mt-2 sm:mt-0">
+                            <Badge variant="secondary" className="bg-blue-50 text-blue-700 mt-2 sm:mt-0 w-fit">
                                 <Shield className="w-3 h-3 mr-1" />
                                 Verified
                             </Badge>
@@ -103,7 +105,7 @@ export default function UserProfile({ user }: UserProfileProps) {
                         <Badge
                             onClick={handleLogout}
                             variant="secondary" className="bg-red-50 cursor-pointer 
-                                hover:text-red-900 hover:bg-red-200
+                                hover:text-red-900 hover:bg-red-200 w-fit
                             text-red-700 mt-2 sm:mt-0">
                             <LogOut className="w-3 h-3 mr-1" />
                             Logout
@@ -165,8 +167,8 @@ export default function UserProfile({ user }: UserProfileProps) {
                                             </div>
                                         </div>
                                         <Badge variant="outline" className={reservation.isPaid ? "text-green-700" : "text-red-700"}>
-                                                {reservation.isPaid ? "Paid" : "Pending Payment"}
-                                            </Badge>
+                                            {reservation.isPaid ? "Paid" : "Pending Payment"}
+                                        </Badge>
                                         <Badge
                                             variant={reservation.status === "confirmed" ? "default" : "secondary"}
                                             className={
@@ -189,9 +191,9 @@ export default function UserProfile({ user }: UserProfileProps) {
                                             )}
                                         </div>
                                         <div className="flex items-center gap-4">
-                                            
-                                            <Button 
-                                            size={'sm'}
+
+                                            <Button
+                                                size={'sm'}
                                                 variant="outline"
                                                 className="text-red-700 rounded-full"
 

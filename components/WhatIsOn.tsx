@@ -10,7 +10,7 @@ import {
 } from '@/components/ui/morphine-dialog';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import Reserver from './Reserver';
-import { Calendar, Check, MapPin, Users } from "lucide-react"
+import { Calendar, Check, MapPin, Users, X } from "lucide-react"
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { useWishList } from '@/hooks/useWishList';
@@ -47,45 +47,7 @@ const tourOptions: TourOption[] = [
         time: "3:30 PM",
     },
 ]
-const itinerary = [
-    {
-        day: 1,
-        title: "Arrival in Athens",
-        description:
-            "Welcome to Greece! Arrive in Athens and transfer to your hotel. Evening welcome dinner with your group.",
-    },
-    {
-        day: 2,
-        title: "Athens City Tour",
-        description:
-            "Explore the Acropolis, Parthenon, and other ancient wonders. Afternoon at leisure to discover the charming Plaka district.",
-    },
-    {
-        day: 3,
-        title: "Delphi Excursion",
-        description: "Day trip to Delphi, home of the famous oracle. Visit the archaeological site and museum.",
-    },
-    {
-        day: 4,
-        title: "Santorini",
-        description: "Morning ferry to Santorini. Afternoon to relax and enjoy the stunning views of the caldera.",
-    },
-    {
-        day: 5,
-        title: "Santorini Island Tour",
-        description: "Visit Oia, Imerovigli, and Fira. Wine tasting at a local vineyard. Evening sunset cruise.",
-    },
-    {
-        day: 6,
-        title: "Santorini Free Day",
-        description: "Free day to explore on your own or relax on the beach. Optional activities available.",
-    },
-    {
-        day: 7,
-        title: "Departure",
-        description: "Transfer to Santorini airport for your departure flight. End of services.",
-    },
-]
+ 
 export default function WhatIsOn({ children, image, _ }: WhatIsOnProps) {
     const { addToWishList, removeFromWishList, isInWishList } = useWishList();
     const [selectedOption, setSelectedOption] = useState<string>(tourOptions[0].id)
@@ -120,8 +82,7 @@ export default function WhatIsOn({ children, image, _ }: WhatIsOnProps) {
                                     Overview
                                 </h1>
                                 <p className='text-base md:text-lg text-neutral-700 font-semibold'>
-                                    Watch the sun rise over red dust, palm groves, and majestic open landscapes from a hot air balloon. Flying with a small group of travelers and live commentary from your veteran pilot, soak up the sights as you glide through the air, then refuel with an authentic Berber breakfast in a Moroccan tent. For ease, your tour includes door-to-door round-trip transfers.
-                                    Read more about - Hot Air Balloon Flight over Marrakech with Traditional Breakfast
+                                    {_.overview}
                                 </p>
 
                                 <h2 className='text-2xl md:text-4xl font-bold'>
@@ -129,34 +90,42 @@ export default function WhatIsOn({ children, image, _ }: WhatIsOnProps) {
                                 </h2>
 
                                 <ol className='space-y-2'>
-                                    <li>Food and Drinks</li>
-                                    <li>Breakfast</li>
-                                    <li>Beverages (coffee, tea, soft drinks)</li>
+                                   {_.includes?.split('\n').map((item, index) => (
+                                       <li key={index} className='flex items-center gap-2'>
+                                             <Check className='text-orange-500' size={20} />
+                                             <p>{item}</p>
+                                        </li>
+                                   ))}
                                 </ol>
 
+                                <h2 className='text-2xl md:text-4xl font-bold'>
+                                    What&apos;s Excluded
+                                </h2>
+                                <ol className='space-y-2'>
+                                   {_.excludes?.split('\n').map((item, index) => (
+                                       <li key={index} className='flex items-center gap-2'>
+                                             <X className='text-orange-500' size={20} />
+                                             <p>{item}</p>
+                                        </li>
+                                   ))}
+                                </ol>
                                 <div>
                                     <div className="pt-6">
-                                    <h2 className='text-2xl md:text-4xl font-bold mb-8'>
-
-                                            Itinerary</h2>
+                                        <h2 className='text-2xl md:text-4xl font-bold mb-8'>Itinerary</h2>
                                         <div className="space-y-0">
-                                            {itinerary.map((item, index) => (
-                                                <div key={item.day} className="flex">
+                                            {_.itinerary.map((item, index) => (
+                                                <div key={index} className="flex">
                                                     <div className="mr-4 relative">
                                                         <div className="w-10 h-10 bg-orange-500 rounded-full flex items-center justify-center text-white font-bold z-10 relative">
-                                                        <MapPin className="  text-white" size={20} />
-
+                                                            <MapPin className="text-white" size={20} />
                                                         </div>
-                                                        {index < itinerary.length - 1 && (
+                                                        {index < _.itinerary.length -1  &&  (
                                                             <div className="absolute top-10 left-1/2 bottom-0 w-0.5 bg-orange-300 -ml-px"></div>
                                                         )}
-                                                        {index > 0 && <div className="absolute top-0 left-1/2 h-4 w-0.5 bg-orange-300 -ml-px"></div>}
                                                     </div>
                                                     <div className="flex-1 pb-8">
-                                                        <h3 className="text-xl font-semibold   flex items-center">
-                                                            {item.title}
-                                                        </h3>
-                                                        <p>{item.description}</p>
+                                                        <h3 className="text-xl font-semibold flex items-center">{item}</h3>
+                                                        <p>{item}</p>
                                                     </div>
                                                 </div>
                                             ))}
@@ -169,7 +138,9 @@ export default function WhatIsOn({ children, image, _ }: WhatIsOnProps) {
                                 <CardHeader className="pb-4">
                                     <div className="space-y-1">
                                         <p className="text-sm text-muted-foreground">From</p>
-                                        <p className="text-3xl font-bold">${selectedTour?.price.toFixed(2)}</p>
+                                        <p className="text-3xl font-bold">
+                                            ${_.priceShuttle ? parseFloat(_.priceShuttle).toFixed(2) : '0.00'}
+                                        </p>
                                         <p className="text-sm text-muted-foreground">per adult</p>
                                     </div>
                                 </CardHeader>
