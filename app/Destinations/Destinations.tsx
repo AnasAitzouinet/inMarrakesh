@@ -3,15 +3,28 @@ import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import DestinationItems from '@/components/DestinationItems';
 import DestinationNavbar from '@/components/DestinationNavbar';
-import DestinationLoader from '@/components/DestinationLoader';
 import { useRouter } from 'next/navigation';
-import { Activities, Trips } from '@prisma/client';
+import { Prisma } from '@prisma/client';
 import { useWishList } from '@/hooks/useWishList';
 
+
+type Activities = Prisma.ActivitiesGetPayload<{
+    include: {
+        options: true
+    }
+}>;
+
+type Trips = Prisma.TripsGetPayload<{
+    include: {
+        options: true
+    }
+}>;
+
 interface Destination {
-    tripList: Trips[];
-    activitiesList: Activities[];
+    tripList: Trips[]
+    activitiesList: Activities[]
 }
+
 
 export default function Destinations({
     tripList,
@@ -23,8 +36,7 @@ export default function Destinations({
     const [trips, setTrips] = useState<Trips[]>(tripList);
     const [activities, setActivities] = useState<Activities[]>(activitiesList);
     const [destinations, setDestinations] = useState<Activities[] | Trips[]>([]);
-    const [loading, setLoading] = useState(false);
-
+ 
     // Update destinations whenever active tab or wishList changes
     useEffect(() => {
         if (active === 'trips') {
@@ -96,7 +108,10 @@ export default function Destinations({
 }
 
 
-const getDestinations = ({ active, destinations }: { active: string, destinations: Activities[] | Trips[] }) => {
+const getDestinations = ({ active, destinations }: {
+    active: string,
+    destinations: Trips[] | Activities[]
+}) => {
     switch (active) {
         case 'trips':
 

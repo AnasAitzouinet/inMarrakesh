@@ -22,13 +22,17 @@ import { Textarea } from "@/components/ui/textarea"
 import { activityFormSchema } from "@/lib/schema"
 import { AddActivity, UpdateActivity } from "@/server/Admin"
 import { toast } from "sonner"
-import { Activities } from "@prisma/client"
+import { Activities, Prisma } from "@prisma/client"
 import { Checkbox } from "@/components/ui/checkbox"
 
 export type ActivityFormValues = z.infer<typeof activityFormSchema>
 
 interface ActivityFormProps {
-  Activity: Activities
+  Activity: Prisma.ActivitiesGetPayload<{
+    include: {
+      options: true
+    }
+  }>
 }
 
 export function UpdateActivityDialog({ Activity }: ActivityFormProps) {
@@ -45,16 +49,21 @@ export function UpdateActivityDialog({ Activity }: ActivityFormProps) {
       overview: Activity.overview ?? undefined,
       includes: Activity.includes ?? undefined,
       excludes: Activity.excludes ?? undefined,
-      canPickup: Activity.canPickup ?? false,
       duration: Activity.duration ?? undefined,
-      options: Activity.options,
-      itinerary: Activity.itinerary,
+      options: Activity.options ? Activity.options.map(option => ({
+        title: option.title ?? undefined,
+        price: option.price ?? undefined,
+        canPickup: option.canPickup ?? undefined,
+        isPrivate: option.isPrivate ?? undefined,
+        description: option.description ?? undefined
+      })) : undefined,
+      itinerary: Activity.itinerary ?? undefined,
     },
   })
 
   async function onSubmit(data: ActivityFormValues) {
     try {
-      const res = await UpdateActivity(Activity.id,data)
+      const res = await UpdateActivity(Activity.id, data)
       if (res.error) {
         toast.error(res.error)
         return
@@ -156,12 +165,15 @@ export function UpdateActivityDialog({ Activity }: ActivityFormProps) {
                   <FormItem>
                     <FormLabel>Overview</FormLabel>
                     <FormControl>
-                      <Textarea placeholder="Activity overview" {...field} />
+                      <Textarea placeholder="Activity overview"
+                        className="h-[200px]"
+                        {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
+
               <FormField
                 control={form.control}
                 name="includes"
@@ -169,7 +181,10 @@ export function UpdateActivityDialog({ Activity }: ActivityFormProps) {
                   <FormItem>
                     <FormLabel>Includes</FormLabel>
                     <FormControl>
-                      <Textarea placeholder="What's included" {...field} />
+                      <Textarea placeholder="What's included"
+
+                        className="h-[200px]"
+                        {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -203,56 +218,130 @@ export function UpdateActivityDialog({ Activity }: ActivityFormProps) {
               />
               <FormField
                 control={form.control}
-                name="canPickup"
-                render={({ field }) => (
-                  <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
-                    <FormControl>
-                      <Checkbox
-                        checked={field.value}
-                        onCheckedChange={field.onChange}
-                      />
-                    </FormControl>
-                    <div className="space-y-1 leading-none">
-                      <FormLabel>Can Pickup</FormLabel>
-                      <FormDescription>
-                        Check if this activity offers pickup service
-                      </FormDescription>
-                    </div>
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
                 name="options"
                 render={() => (
                   <FormItem>
                     <FormLabel>Options</FormLabel>
                     <FormDescription>Add the available options for the activity.</FormDescription>
-                    {form.watch("options").map((_, index) => (
+                    {Activity?.options?.map((option, index) => (
                       <FormField
-                        key={index}
+                        key={option.id}
                         control={form.control}
                         name={`options.${index}`}
                         render={({ field }) => (
                           <FormItem>
                             <FormControl>
-                              <div className="flex items-center space-x-2">
-                                <Input {...field} />
-                                <Button
-                                  type="button"
-                                  variant="outline"
-                                  size="icon"
-                                  onClick={() => {
-                                    const currentOptions = form.getValues("options")
-                                    if (currentOptions.length > 1) {
-                                      const newOptions = [...currentOptions]
-                                      newOptions.splice(index, 1)
+                              <div className="flex flex-col space-y-2 p-4 border rounded-lg bg-muted/50">
+                                <div className="flex items-center space-x-2">
+                                  <Input
+                                    placeholder="Option title"
+                                    value={field.value?.title ?? option.title ?? ""}
+                                    onChange={(e) => {
+                                      const newOptions = [...form.getValues("options")]
+                                      newOptions[index] = {
+                                        ...newOptions[index],
+                                        title: e.target.value
+                                      }
                                       form.setValue("options", newOptions)
+                                    }}
+                                  />
+                                  <Button
+                                    type="button"
+                                    variant="outline"
+                                    size="icon"
+                                    onClick={() => {
+                                      const currentOptions = form.getValues("options")
+                                      if (currentOptions.length > 1) {
+                                        const newOptions = [...currentOptions]
+                                        newOptions.splice(index, 1)
+                                        form.setValue("options", newOptions)
+                                      }
+                                    }}
+                                  >
+                                    <X className="h-4 w-4" />
+                                  </Button>
+                                </div>
+                                <Input
+                                  placeholder="Option price"
+                                  value={field.value?.price ?? option.price ?? ""}
+                                  onChange={(e) => {
+                                    const newOptions = [...form.getValues("options")]
+                                    newOptions[index] = {
+                                      ...newOptions[index],
+                                      price: e.target.value
                                     }
+                                    form.setValue("options", newOptions)
                                   }}
-                                >
-                                  <X className="h-4 w-4" />
-                                </Button>
+                                />
+                                <Textarea
+                                  placeholder="Option description"
+                                  className="h-fit"
+                                  value={field.value?.description ?? option.description ?? ""}
+                                  onChange={(e) => {
+                                    const newOptions = [...form.getValues("options")]
+                                    newOptions[index] = {
+                                      ...newOptions[index],
+                                      description: e.target.value
+                                    }
+                                    form.setValue("options", newOptions)
+                                  }}
+                                />
+                                <FormField
+                                  control={form.control}
+                                  name={`options.${index}.time`}
+                                  render={({ field }) => (
+                                    <Input
+                                      placeholder="Type the time"
+                                      {...field}
+                                    />
+                                  )}
+                                />
+                                <div className="flex space-y-4 flex-col py-2 w-full">
+                                  <FormField
+                                    control={form.control}
+                                    name={`options.${index}.canPickup`}
+                                    defaultValue={option.canPickup ?? false}
+                                    render={({ field }) => (
+                                      <FormItem className="flex flex-row items-start space-x-3 space-y-0 bg-white rounded-md border p-4">
+                                        <FormControl>
+                                          <Checkbox
+                                            checked={field.value}
+                                            onCheckedChange={field.onChange}
+                                          />
+                                        </FormControl>
+                                        <div className="space-y-1 leading-none">
+                                          <FormLabel>Can Pickup</FormLabel>
+                                          <FormDescription>
+                                            Check if this activity offers pickup service
+                                          </FormDescription>
+                                        </div>
+                                      </FormItem>
+                                    )}
+                                  />
+                                  <FormField
+                                    control={form.control}
+                                    name={`options.${index}.isPrivate`}
+                                    defaultValue={option.isPrivate ?? false}
+                                    render={({ field }) => (
+                                      <FormItem className="flex flex-row items-start space-x-3 space-y-0 bg-white rounded-md border p-4">
+                                        <FormControl>
+                                          <Checkbox
+                                            checked={field.value}
+                                            onCheckedChange={field.onChange}
+                                          />
+                                        </FormControl>
+                                        <div className="space-y-1 leading-none">
+                                          <FormLabel>
+                                            Is Private
+                                          </FormLabel>
+                                          <FormDescription>
+                                            Check if this option is private
+                                          </FormDescription>
+                                        </div>
+                                      </FormItem>
+                                    )}
+                                  />
+                                </div>
                               </div>
                             </FormControl>
                             <FormMessage />
@@ -266,11 +355,20 @@ export function UpdateActivityDialog({ Activity }: ActivityFormProps) {
                       size="sm"
                       className="mt-2"
                       onClick={() => {
-                        form.setValue("options", [...form.getValues("options"), ""])
+                        form.setValue("options", [
+                          ...form.getValues("options"),
+                          {
+                            title: "",
+                            price: "",
+                            canPickup: false,
+                            isPrivate: false,
+                            description: ""
+                          }
+                        ])
                       }}
                     >
                       <Plus className="mr-2 h-4 w-4" />
-                      Add Option
+                      Update Option
                     </Button>
                   </FormItem>
                 )}

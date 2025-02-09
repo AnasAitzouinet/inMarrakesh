@@ -40,9 +40,8 @@ export function AddActivityDialog() {
       overview: "",
       includes: "",
       excludes: "",
-      canPickup: false,
       duration: "",
-      options: [""],
+      options: [{ title: "", price: "", canPickup: false, isPrivate: false, description: "" }],
       itinerary: [""],
     },
   })
@@ -153,7 +152,8 @@ export function AddActivityDialog() {
                   <FormItem>
                     <FormLabel>Overview</FormLabel>
                     <FormControl>
-                      <Textarea placeholder="Activity overview" {...field} />
+                      <Textarea placeholder="Activity overview"
+                        {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -198,26 +198,7 @@ export function AddActivityDialog() {
                   </FormItem>
                 )}
               />
-              <FormField
-                control={form.control}
-                name="canPickup"
-                render={({ field }) => (
-                  <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
-                    <FormControl>
-                      <Checkbox
-                        checked={field.value}
-                        onCheckedChange={field.onChange}
-                      />
-                    </FormControl>
-                    <div className="space-y-1 leading-none">
-                      <FormLabel>Can Pickup</FormLabel>
-                      <FormDescription>
-                        Check if this activity offers pickup service
-                      </FormDescription>
-                    </div>
-                  </FormItem>
-                )}
-              />
+
               <FormField
                 control={form.control}
                 name="options"
@@ -233,23 +214,108 @@ export function AddActivityDialog() {
                         render={({ field }) => (
                           <FormItem>
                             <FormControl>
-                              <div className="flex items-center space-x-2">
-                                <Input {...field} />
-                                <Button
-                                  type="button"
-                                  variant="outline"
-                                  size="icon"
-                                  onClick={() => {
-                                    const currentOptions = form.getValues("options")
-                                    if (currentOptions.length > 1) {
-                                      const newOptions = [...currentOptions]
-                                      newOptions.splice(index, 1)
-                                      form.setValue("options", newOptions)
-                                    }
-                                  }}
-                                >
-                                  <X className="h-4 w-4" />
-                                </Button>
+                              <div className="flex flex-col space-y-2 p-4 border rounded-lg bg-muted/50">
+                                <div className="flex items-center space-x-2">
+                                  <FormField
+                                    control={form.control}
+                                    name={`options.${index}.title`}
+                                    render={({ field }) => (
+                                      <Input
+                                        placeholder="Option title"
+                                        {...field}
+                                      />
+                                    )}
+                                  />
+                                  <Button
+                                    type="button"
+                                    variant="outline"
+                                    size="icon"
+                                    onClick={() => {
+                                      const currentOptions = form.getValues("options")
+                                      if (currentOptions.length > 1) {
+                                        const newOptions = [...currentOptions]
+                                        newOptions.splice(index, 1)
+                                        form.setValue("options", newOptions)
+                                      }
+                                    }}
+                                  >
+                                    <X className="h-4 w-4" />
+                                  </Button>
+                                </div>
+                                <FormField
+                                  control={form.control}
+                                  name={`options.${index}.price`}
+                                  render={({ field }) => (
+                                    <Input
+                                      placeholder="Option price"
+                                      {...field}
+                                    />
+                                  )}
+                                />
+                                <FormField
+                                  control={form.control}
+                                  name={`options.${index}.description`}
+                                  render={({ field }) => (
+                                    <Textarea
+                                      placeholder="Option description"
+                                      {...field}
+                                    />
+                                  )}
+                                />
+                                <FormField
+                                  control={form.control}
+                                  name={`options.${index}.time`}
+                                  render={({ field }) => (
+                                    <Input
+                                      placeholder="Type the time"
+                                      {...field}
+                                    />
+                                  )}
+                                />
+                                <div className="flex space-y-4 flex-col py-2 w-full">
+                                  <FormField
+                                    control={form.control}
+                                    name={`options.${index}.canPickup`}
+                                    render={({ field }) => (
+                                      <FormItem className="flex flex-row items-start space-x-3 space-y-0 bg-white rounded-md border p-4">
+                                        <FormControl>
+                                          <Checkbox
+                                            checked={field.value}
+                                            onCheckedChange={field.onChange}
+                                          />
+                                        </FormControl>
+                                        <div className="space-y-1 leading-none">
+                                          <FormLabel>Can Pickup</FormLabel>
+                                          <FormDescription>
+                                            Check if this activity offers pickup service
+                                          </FormDescription>
+                                        </div>
+                                      </FormItem>
+                                    )}
+                                  />
+                                  <FormField
+                                    control={form.control}
+                                    name={`options.${index}.isPrivate`}
+                                    render={({ field }) => (
+                                      <FormItem className="flex flex-row items-start space-x-3 space-y-0 bg-white rounded-md border p-4">
+                                        <FormControl>
+                                          <Checkbox
+                                            checked={field.value}
+                                            onCheckedChange={field.onChange}
+                                          />
+                                        </FormControl>
+                                        <div className="space-y-1 leading-none">
+                                          <FormLabel>
+                                            Is Private
+                                          </FormLabel>
+                                          <FormDescription>
+                                            Check if this option is private
+                                          </FormDescription>
+                                        </div>
+                                      </FormItem>
+                                    )}
+                                  />
+                                </div>
                               </div>
                             </FormControl>
                             <FormMessage />
@@ -263,7 +329,16 @@ export function AddActivityDialog() {
                       size="sm"
                       className="mt-2"
                       onClick={() => {
-                        form.setValue("options", [...form.getValues("options"), ""])
+                        form.setValue("options", [
+                          ...form.getValues("options"),
+                          {
+                            title: "",
+                            price: "",
+                            canPickup: false,
+                            isPrivate: false,
+                            description: ""
+                          }
+                        ])
                       }}
                     >
                       <Plus className="mr-2 h-4 w-4" />

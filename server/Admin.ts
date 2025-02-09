@@ -48,7 +48,19 @@ export async function AddTrip(data: TripFormValues) {
 
         const response = await prisma.trips.create({
             data: {
-                ...validatedData.data,
+                title: validatedData.data.title,
+                subtitle: validatedData.data.subtitle,
+                pricePrivate: validatedData.data.pricePrivate,
+                priceShuttle: validatedData.data.priceShuttle,
+                image: validatedData.data.image,
+                overview: validatedData.data.overview,
+                includes: validatedData.data.includes,
+                excludes: validatedData.data.excludes,
+                duration: validatedData.data.duration,
+                itinerary: validatedData.data.itinerary,
+                options: {
+                    create: validatedData.data.options
+                }
             }
         })
         revalidatePath("/Admin/trips")
@@ -85,7 +97,11 @@ export async function GetTrips(): Promise<{ error: string | undefined, data: Tri
         }
     }
     try {
-        const trips = await prisma.trips.findMany()
+        const trips = await prisma.trips.findMany({
+            include: {
+                options: true
+            }
+        })
         return {
             error: undefined,
             data: trips
@@ -170,9 +186,23 @@ export async function UpdateTrip(id: string, data: TripFormValues) {
             where: {
                 id: id
             },
+
             data: {
-                ...validatedData.data,
+                title: validatedData.data.title,
+                subtitle: validatedData.data.subtitle,
+                pricePrivate: validatedData.data.pricePrivate,
+                priceShuttle: validatedData.data.priceShuttle,
+                image: validatedData.data.image,
+                overview: validatedData.data.overview,
+                includes: validatedData.data.includes,
+                excludes: validatedData.data.excludes,
+                duration: validatedData.data.duration,
+                itinerary: validatedData.data.itinerary,
+                options: {
+                    create: validatedData.data.options
+                }
             }
+
         })
 
         revalidatePath("/Admin/trips")
@@ -229,7 +259,19 @@ export async function AddActivity(data: ActivityFormValues) {
 
         const response = await prisma.activities.create({
             data: {
-                ...validatedData.data,
+                title: validatedData.data.title,
+                subtitle: validatedData.data.subtitle,
+                pricePrivate: validatedData.data.pricePrivate,
+                priceShuttle: validatedData.data.priceShuttle,
+                image: validatedData.data.image,
+                overview: validatedData.data.overview,
+                includes: validatedData.data.includes,
+                excludes: validatedData.data.excludes,
+                duration: validatedData.data.duration,
+                itinerary: validatedData.data.itinerary,
+                options: {
+                    create: validatedData.data.options
+                }
             }
         })
 
@@ -267,7 +309,11 @@ export async function GetActivities(): Promise<{ error: string | undefined, data
         }
     }
     try {
-        const activities = await prisma.activities.findMany()
+        const activities = await prisma.activities.findMany({
+            include: {
+                options: true
+            }
+        })
         return {
             error: undefined,
             data: activities
@@ -353,7 +399,19 @@ export async function UpdateActivity(id: string, data: ActivityFormValues) {
                 id: id
             },
             data: {
-                ...validatedData.data,
+                title: validatedData.data.title,
+                subtitle: validatedData.data.subtitle,
+                pricePrivate: validatedData.data.pricePrivate,
+                priceShuttle: validatedData.data.priceShuttle,
+                image: validatedData.data.image,
+                overview: validatedData.data.overview,
+                includes: validatedData.data.includes,
+                excludes: validatedData.data.excludes,
+                duration: validatedData.data.duration,
+                itinerary: validatedData.data.itinerary,
+                options: {
+                    create: validatedData.data.options
+                }
             }
         })
 

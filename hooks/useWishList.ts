@@ -1,6 +1,18 @@
 import { useEffect, useState, useCallback } from 'react';
-import { Activities, Trips } from '@prisma/client';
 import { useRouter } from 'next/navigation';
+import { Prisma } from '@prisma/client';
+
+type Activities = Prisma.ActivitiesGetPayload<{
+  include: {
+      options: true
+  }
+}>;
+
+type Trips = Prisma.TripsGetPayload<{
+  include: {
+      options: true
+  }
+}>;
 
 export function useWishList() {
   const [wishList, setWishList] = useState<(Activities | Trips)[]>([]);

@@ -31,9 +31,8 @@ model User {
 
   @@map("user")
 }
-
 model Trips {
-  id           String   @id @default(cuid())
+  id           String  @id @default(cuid())
   title        String?
   subtitle     String?
   pricePrivate String?
@@ -43,18 +42,37 @@ model Trips {
   includes     String?
   excludes     String?
   duration     String?
-  canPickup    Boolean?
-  
-  itinerary    String[]
-  options      String[]
+
+  itinerary String[]
+  options   Options[]
 
   createdAt   DateTime       @default(now())
   updatedAt   DateTime       @updatedAt
   Reservation Reservations[]
 }
 
+model Options {
+  id          String   @id @default(cuid())
+  title       String?
+  price       String?
+  time        String?
+  canPickup   Boolean?
+  isPrivate   Boolean?
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  Trips   Trips?  @relation(fields: [tripsId], references: [id])
+  tripsId String?
+
+  Activities   Activities? @relation(fields: [activitiesId], references: [id])
+  activitiesId String?
+
+  Reservations Reservations[]
+}
+
 model Activities {
-  id           String   @id @default(cuid())
+  id           String  @id @default(cuid())
   title        String?
   subtitle     String?
   pricePrivate String?
@@ -63,11 +81,10 @@ model Activities {
   overview     String?
   includes     String?
   excludes     String?
-  canPickup    Boolean?
   duration     String?
 
-  itinerary    String[]
-  options      String[]
+  itinerary String[]
+  options   Options[]
 
   createdAt   DateTime       @default(now())
   updatedAt   DateTime       @updatedAt
@@ -99,6 +116,9 @@ model Reservations {
 
   Trips   Trips?  @relation(fields: [tripsId], references: [id])
   tripsId String?
+
+  Options   Options? @relation(fields: [optionsId], references: [id])
+  optionsId String?
 }
 
 model Session {

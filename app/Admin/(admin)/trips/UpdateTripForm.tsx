@@ -23,6 +23,7 @@ import { tripFormSchema, type TripFormValues } from "@/lib/schema"
 import { AddTrip, UpdateTrip } from "@/server/Admin"
 import { toast } from "sonner"
 import { Trips } from "@prisma/client"
+import { Checkbox } from "@/components/ui/checkbox"
 
 interface TripFormProps {
     trip: Trips;
@@ -182,6 +183,156 @@ export function UpdateTripDialog({ trip }: TripFormProps) {
                                             <Textarea placeholder="What's excluded" {...field} />
                                         </FormControl>
                                         <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+
+
+                            <FormField
+                                control={form.control}
+                                name="options"
+                                render={() => (
+                                    <FormItem>
+                                        <FormLabel>Options</FormLabel>
+                                        <FormDescription>Update the available options for the Trips.</FormDescription>
+                                        {form.watch("options").map((_, index) => (
+                                            <FormField
+                                                key={index}
+                                                control={form.control}
+                                                name={`options.${index}`}
+                                                render={({ field }) => (
+                                                    <FormItem>
+                                                        <FormControl>
+                                                            <div className="flex flex-col space-y-2 p-4 border rounded-lg bg-muted/50">
+                                                                <div className="flex items-center space-x-2">
+                                                                    <FormField
+                                                                        control={form.control}
+                                                                        name={`options.${index}.title`}
+                                                                        render={({ field }) => (
+                                                                            <Input
+                                                                                placeholder="Option title"
+                                                                                {...field}
+                                                                            />
+                                                                        )}
+                                                                    />
+                                                                    <Button
+                                                                        type="button"
+                                                                        variant="outline"
+                                                                        size="icon"
+                                                                        onClick={() => {
+                                                                            const currentOptions = form.getValues("options")
+                                                                            if (currentOptions.length > 1) {
+                                                                                const newOptions = [...currentOptions]
+                                                                                newOptions.splice(index, 1)
+                                                                                form.setValue("options", newOptions)
+                                                                            }
+                                                                        }}
+                                                                    >
+                                                                        <X className="h-4 w-4" />
+                                                                    </Button>
+                                                                </div>
+                                                                <FormField
+                                                                    control={form.control}
+                                                                    name={`options.${index}.price`}
+                                                                    render={({ field }) => (
+                                                                        <Input
+                                                                            placeholder="Option price"
+                                                                            {...field}
+                                                                        />
+                                                                    )}
+                                                                />
+                                                                <FormField
+                                                                    control={form.control}
+                                                                    name={`options.${index}.description`}
+                                                                    render={({ field }) => (
+                                                                        <Textarea
+                                                                            placeholder="Option description"
+                                                                            {...field}
+                                                                        />
+                                                                    )}
+                                                                />
+                                                                <FormField
+                                                                    control={form.control}
+                                                                    name={`options.${index}.time`}
+                                                                    render={({ field }) => (
+                                                                        <Input
+                                                                            placeholder="Type the time"
+                                                                            {...field}
+                                                                        />
+                                                                    )}
+                                                                />
+                                                                <div className="flex space-y-4 flex-col py-2 w-full">
+                                                                    <FormField
+                                                                        control={form.control}
+                                                                        name={`options.${index}.canPickup`}
+                                                                        render={({ field }) => (
+                                                                            <FormItem className="flex flex-row items-start space-x-3 space-y-0 bg-white rounded-md border p-4">
+                                                                                <FormControl>
+                                                                                    <Checkbox
+                                                                                        checked={field.value}
+                                                                                        onCheckedChange={field.onChange}
+                                                                                    />
+                                                                                </FormControl>
+                                                                                <div className="space-y-1 leading-none">
+                                                                                    <FormLabel>Can Pickup</FormLabel>
+                                                                                    <FormDescription>
+                                                                                        Check if this activity offers pickup service
+                                                                                    </FormDescription>
+                                                                                </div>
+                                                                            </FormItem>
+                                                                        )}
+                                                                    />
+                                                                    <FormField
+                                                                        control={form.control}
+                                                                        name={`options.${index}.isPrivate`}
+                                                                        render={({ field }) => (
+                                                                            <FormItem className="flex flex-row items-start space-x-3 space-y-0 bg-white rounded-md border p-4">
+                                                                                <FormControl>
+                                                                                    <Checkbox
+                                                                                        checked={field.value}
+                                                                                        onCheckedChange={field.onChange}
+                                                                                    />
+                                                                                </FormControl>
+                                                                                <div className="space-y-1 leading-none">
+                                                                                    <FormLabel>
+                                                                                        Is Private
+                                                                                    </FormLabel>
+                                                                                    <FormDescription>
+                                                                                        Check if this option is private
+                                                                                    </FormDescription>
+                                                                                </div>
+                                                                            </FormItem>
+                                                                        )}
+                                                                    />
+                                                                </div>
+                                                            </div>
+                                                        </FormControl>
+                                                        <FormMessage />
+                                                    </FormItem>
+                                                )}
+                                            />
+                                        ))}
+                                        <Button
+                                            type="button"
+                                            variant="outline"
+                                            size="sm"
+                                            className="mt-2"
+                                            onClick={() => {
+                                                form.setValue("options", [
+                                                    ...form.getValues("options"),
+                                                    {
+                                                        title: "",
+                                                        price: "",
+                                                        canPickup: false,
+                                                        isPrivate: false,
+                                                        description: ""
+                                                    }
+                                                ])
+                                            }}
+                                        >
+                                            <Plus className="mr-2 h-4 w-4" />
+                                            Add Option
+                                        </Button>
                                     </FormItem>
                                 )}
                             />

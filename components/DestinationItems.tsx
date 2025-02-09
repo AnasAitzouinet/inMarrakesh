@@ -2,17 +2,23 @@
 
 import React from 'react';
 import WhatIsOn from './WhatIsOn';
-import { cn } from "@/lib/utils";
-import { badgeVariants } from "@/components/ui/badge";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Check } from "lucide-react";
-import { Activities, Trips } from '@prisma/client';
+import { Activities, Prisma, Trips } from '@prisma/client';
 import { useWishList } from '@/hooks/useWishList';
 import { Button } from './ui/button';
 
 
 
-export default function DestinationItems({ _ }: { _: Trips | Activities }) {
+export default function DestinationItems({ _ }: {
+    _: Prisma.TripsGetPayload<{
+        include: {
+            options: true
+        }
+    }> | Prisma.ActivitiesGetPayload<{
+        include: {
+            options: true
+        }
+    }>
+}) {
     const { addToWishList, removeFromWishList, isInWishList } = useWishList();
 
     console.log(_)
@@ -45,9 +51,9 @@ export default function DestinationItems({ _ }: { _: Trips | Activities }) {
                     <p className='lg:text-xl text-gray-200 font-semibold'>{_.subtitle}</p>
                     <p className='lg:text-xl text-orange-300 font-semibold'>From {' '}
                         <span className=' font-black'>
-                        {_.priceShuttle}$
+                            {_.priceShuttle}$
                         </span>{' '}
-                         per person</p>
+                        per person</p>
                 </div>
 
                 <div className='w-full h-full absolute bg-gradient-to-b from-transparent to-black/70'></div>

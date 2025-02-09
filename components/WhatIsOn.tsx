@@ -9,18 +9,26 @@ import {
     MorphingDialogContainer,
 } from '@/components/ui/morphine-dialog';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import Reserver from './Reserver';
 import { Calendar, Check, MapPin, Users, X } from "lucide-react"
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { useWishList } from '@/hooks/useWishList';
-import { Activities, Trips } from '@prisma/client';
+import { Activities, Prisma, Trips } from '@prisma/client';
 import { cn } from '@/lib/utils';
+import { Reserver } from '@/server/Client';
 
 interface WhatIsOnProps {
     children: React.ReactNode
     image: string | null;
-    _: Trips | Activities
+    _: Prisma.TripsGetPayload<{
+        include: {
+            options: true
+        }
+    }> | Prisma.ActivitiesGetPayload<{
+        include: {
+            options: true
+        }
+    }>
 }
 
 interface TourOption {
@@ -47,7 +55,7 @@ const tourOptions: TourOption[] = [
         time: "3:30 PM",
     },
 ]
- 
+
 export default function WhatIsOn({ children, image, _ }: WhatIsOnProps) {
     const { addToWishList, removeFromWishList, isInWishList } = useWishList();
     const [selectedOption, setSelectedOption] = useState<string>(tourOptions[0].id)
@@ -90,24 +98,24 @@ export default function WhatIsOn({ children, image, _ }: WhatIsOnProps) {
                                 </h2>
 
                                 <ol className='space-y-2'>
-                                   {_.includes?.split('\n').map((item, index) => (
-                                       <li key={index} className='flex items-center gap-2'>
-                                             <Check className='text-orange-500' size={20} />
-                                             <p>{item}</p>
+                                    {_.includes?.split('\n').map((item, index) => (
+                                        <li key={index} className='flex items-center gap-2'>
+                                            <Check className='text-orange-500' size={20} />
+                                            <p>{item}</p>
                                         </li>
-                                   ))}
+                                    ))}
                                 </ol>
 
                                 <h2 className='text-2xl md:text-4xl font-bold'>
                                     What&apos;s Excluded
                                 </h2>
                                 <ol className='space-y-2'>
-                                   {_.excludes?.split('\n').map((item, index) => (
-                                       <li key={index} className='flex items-center gap-2'>
-                                             <X className='text-orange-500' size={20} />
-                                             <p>{item}</p>
+                                    {_.excludes?.split('\n').map((item, index) => (
+                                        <li key={index} className='flex items-center gap-2'>
+                                            <X className='text-orange-500' size={20} />
+                                            <p>{item}</p>
                                         </li>
-                                   ))}
+                                    ))}
                                 </ol>
                                 <div>
                                     <div className="pt-6">
@@ -119,7 +127,7 @@ export default function WhatIsOn({ children, image, _ }: WhatIsOnProps) {
                                                         <div className="w-10 h-10 bg-orange-500 rounded-full flex items-center justify-center text-white font-bold z-10 relative">
                                                             <MapPin className="text-white" size={20} />
                                                         </div>
-                                                        {index < _.itinerary.length -1  &&  (
+                                                        {index < _.itinerary.length - 1 && (
                                                             <div className="absolute top-10 left-1/2 bottom-0 w-0.5 bg-orange-300 -ml-px"></div>
                                                         )}
                                                     </div>
@@ -165,10 +173,10 @@ export default function WhatIsOn({ children, image, _ }: WhatIsOnProps) {
                                     </div>
 
                                     <div>
-                                        <p className="text-sm text-muted-foreground mb-4">{tourOptions.length} options available for 2/3</p>
+                                        <p className="text-sm text-muted-foreground mb-4">{_.options.length} options available for 2/3</p>
 
                                         <div className="space-y-3">
-                                            {tourOptions.map((option) => (
+                                            {_.options.map((option) => (
                                                 <div
                                                     key={option.id}
                                                     className={cn(
@@ -180,7 +188,7 @@ export default function WhatIsOn({ children, image, _ }: WhatIsOnProps) {
                                                     <div className="flex items-start justify-between">
                                                         <div>
                                                             <h4 className="font-semibold">{option.title}</h4>
-                                                            <p className="text-sm text-muted-foreground">{option.pickup}</p>
+                                                            <p className="text-sm text-muted-foreground">{option.canPickup}</p>
                                                         </div>
                                                         <div
                                                             className={cn(
@@ -195,15 +203,16 @@ export default function WhatIsOn({ children, image, _ }: WhatIsOnProps) {
                                                     <div className="space-y-2">
                                                         <div className="flex justify-between text-sm">
                                                             <span>
-                                                                {travelers} Adults x ${option.price.toFixed(2)}
+                                                                {travelers} Adults x ${(parseFloat(option?.price || '0')).toFixed(2)}
                                                             </span>
-                                                            <span>${(option.price * travelers).toFixed(2)}</span>
+                                                            <span>${(parseFloat(option?.price || '0') * travelers).toFixed(2)}</span>
                                                         </div>
                                                         <p className="text-xs text-muted-foreground">(Price includes taxes and booking fees)</p>
                                                     </div>
 
                                                     <Button
                                                         variant={selectedOption === option.id ? "default" : "outline"}
+                                                        onClick={() => setSelectedOption(option.id)}
                                                         className="w-full justify-center"
                                                     >
                                                         {option.time}
@@ -215,11 +224,27 @@ export default function WhatIsOn({ children, image, _ }: WhatIsOnProps) {
 
                                     <Button
                                         className="w-full bg-yellow-400 hover:bg-yellow-500 text-black"
-                                        onClick={() => {
-                                            console.log("Reserved:", {
-                                                option: selectedTour,
-                                                travelers,
-                                                total,
+                                        onClick={async () => {
+                                            await Reserver({
+                                                data: {
+                                                    adults: travelers,
+                                                    kids: 0,
+                                                    dateTo: new Date().toISOString(),
+                                                    isPickup: true,
+                                                    pickUpPlace: selectedTour?.pickup || '',
+                                                    isPaid: false,
+                                                    status: 'pending',
+                                                    tripId: "null",
+                                                    activityId: _.id,
+                                                    optionID: selectedOption,
+                                                    phoneNumber: '0777794814',
+                                                }
+                                            }).then((res) => {
+                                                if (!res.error) {
+                                                    console.log('Reservation success')
+                                                } else {
+                                                    console.log('Reservation failed')
+                                                }
                                             })
                                         }}
                                     >
